@@ -1,0 +1,75 @@
+function [theta1, theta2, theta3, valid] = deltaIK(x, y, z)
+
+% Returns angles in degrees (theta=0 is horizontal) and a validity flag.
+
+
+%% Robot geometry (mm)
+f = 107;  % Base inradius (center to midpoint of side)
+e = 36;   % End-effector inradius
+rf = 150; % Upper arm length (bicep, Lb)
+re = 450; % Lower arm length (parallelogram, Lp)
+sqrt3 = sqrt(3);
+
+%% Geometric Offset Calculation
+
+t = (2*f - e) * sqrt3 / 3;
+
+%% --- Arm 1 (top, 0 degrees) ---
+[theta1, v1] = calcAngleYZ_Robust(x, y, z, t, rf, re);
+
+%% --- Arm 2 (rotated +120°) ---
+c120 = cosd(120); s120 = sind(120);
+x2 = x*c120 + y*s120;
+y2 = -x*s120 + y*c120;
+[theta2, v2] = calcAngleYZ_Robust(x2, y2, z, t, rf, re);
+
+%% --- Arm 3 (rotated -120° or +240°) ---
+c240 = cosd(240); s240 = sind(240);
+x3 = x*c240 + y*s240; 
+y3 = -x*s240 + y*c240;
+[theta3, v3] = calcAngleYZ_Robust(x3, y3, z, t, rf, re);
+
+%% Combined validity
+valid = v1 && v2 && v3;
+if ~valid
+    theta1 = NaN; theta2 = NaN; theta3 = NaN;
+end
+end
+
+%% --- Robust 3D Trigonometric Helper Function ---
+function [theta_deg, valid] = calcAngleYZ_Robust(x0, y0, z0, t, rf, re)
+% Solves the single-arm kinematics using the quadratic solution for sine/cosine.
+
+    
+    y_p = y0 + t;
+    
+    
+    
+    A = 2 * rf * z0;                 % Coefficient for sin(theta)
+    B = 2 * rf * y_p;                % Coefficient for cos(theta)
+    K = x0^2 + y_p^2 + z0^2 + rf^2 - re^2; % Constant term
+
+    
+    discriminant = A^2 + B^2 - K^2;
+
+    if discriminant < 0
+        
+        theta_deg = NaN;
+        valid = false;
+        return;
+    end
+    
+    sq_discriminant = sqrt(discriminant);
+
+    alpha = atan2(A, B); 
+    
+    
+    beta = atan2(sq_discriminant, K); 
+    
+    % Final angle in radians
+    theta_rad = alpha - beta;
+    
+    % Convert to degrees
+    theta_deg = rad2deg(theta_rad);
+    valid = true;
+end
