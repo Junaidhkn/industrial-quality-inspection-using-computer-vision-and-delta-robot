@@ -3,7 +3,7 @@ function J = deltaJacobian(theta_deg)
 % Inputs: theta_deg = [th1 th2 th3] in degrees
 % Output: J (3x3) maps end-effector force (N) to joint torques (N·m)
 
-f = 107; e = 36; rf = 150; re = 450;
+f = 135; e = 36; rf = 250; re = 500;
 
 th = deg2rad(theta_deg);
 sqrt3 = sqrt(3);
