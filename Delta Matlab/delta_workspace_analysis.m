@@ -10,7 +10,7 @@ zRange = -600:30:-50;    % Z-axis (downward)
 Fz = 3.5; % downward force in N
 
 % Upper arm length in meters
-rf_m = 150/1000; % 150 mm -> meters
+rf_m = 250/1000; % 250 mm -> meters
 
 % Preallocate
 points = [];
