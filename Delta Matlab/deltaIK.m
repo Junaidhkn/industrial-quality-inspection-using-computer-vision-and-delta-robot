@@ -7,10 +7,10 @@ function [theta1, theta2, theta3, valid] = deltaIK(x, y, z)
 % maintaining the user's unique geometric parameter 't'.
 
 %% Robot geometry (mm)
-f = 107;  % Base inradius (center to midpoint of side)
+f = 130  % Base inradius (center to midpoint of side)
 e = 36;   % End-effector inradius
-rf = 150; % Upper arm length (bicep, Lb)
-re = 450; % Lower arm length (parallelogram, Lp)
+rf = 250; % Upper arm length (bicep, Lb)
+re = 500; % Lower arm length (parallelogram, Lp)
 sqrt3 = sqrt(3);
 
 %% Geometric Offset Calculation
